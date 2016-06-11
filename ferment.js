@@ -52,7 +52,7 @@ function update_calculation(parameter_fields, equation_fields) {
     var ethanol_g = (4.0 * amount_sucrose) * MASS.ethanol;
     var ethanol_l = (ethanol_g * DENSITY.ethanol) / 1000.0
 
-    $(equation_fields.sucrose).html(amount_sucrose.toFixed(2) + ' g');
+    $(equation_fields.sucrose).html(all_sugar.toFixed(2) + ' g');
     $(equation_fields.water).html(amount_water.toFixed(2) + ' g');
     $(equation_fields.ethanol).html(ethanol_g.toFixed(2) + ' g' +
                                     ' (' + ethanol_l.toFixed(2) + ' litres)');
@@ -65,6 +65,10 @@ function bind_fields(source_fields, destination_fields, with_function) {
 
     // Note that with_function still receives info of ALL fields, not only 1 source
     $.each(source_fields, function(key, source_id) {
+        // Special case of 'other_sucrose'
+        if (typeof source_id.amount !== 'undefined') {
+            source_id = source_id.amount;
+        }
         $(source_id).ready(function() { 
             with_function(source_fields, destination_fields)
         });
