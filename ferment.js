@@ -44,7 +44,8 @@ function update_calculation(parameter_fields, calculation_fields) {
             sugar_content = parseFloat(parameter_fields.other_sucrose.content);
         }
         else {
-            sugar_content = parseFloat($(parameter_fields.other_sucrose.content).val());
+            // Field value is a percentage
+            sugar_content = parseFloat($(parameter_fields.other_sucrose.content).val()) / 100.0;
         }
         all_sugar_g += parseFloat($(parameter_fields.other_sucrose.amount).val()) * sugar_content;
     }

@@ -35,16 +35,16 @@
                 </div></div>
             </div>
             <div class="form-group tight-bottom">
-                <label for="water" class="col-sm-5 col-md-6 control-label">How much water?</label>
+                <label for="honey-content" class="col-sm-5 col-md-6 control-label">Content of sugar in honey</label>
                 <div class="col-sm-5 col-md-6"><div class="input-group">
-                    <input id="water" type="number" step="any" min="0" class="form-control input-sm" value="0"></input> 
-                    <span class="input-group-addon">litres</span>
+                    <input id="honey-content" type="number" step="any" min="0" class="form-control input-sm" value="83"></input> 
+                    <span class="input-group-addon">%</span>
                 </div></div>
             </div>
             <div class="form-group tight-bottom">
-                <label for="ethanol" class="col-sm-5 col-md-6 control-label">Resulting amount of ethanol</label>
+                <label for="water" class="col-sm-5 col-md-6 control-label">How much water?</label>
                 <div class="col-sm-5 col-md-6"><div class="input-group">
-                    <input id="ethanol" type="number" step="any" min="0" class="form-control input-sm" value="0"></input>
+                    <input id="water" type="number" step="any" min="0" class="form-control input-sm" value="0"></input> 
                     <span class="input-group-addon">litres</span>
                 </div></div>
             </div>
@@ -114,7 +114,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     // IDs for parameter fields and fields which show the calculation results
-    fermentation_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': 0.83}},
+    fermentation_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': '#honey-content'}},
                         {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol', 'result': '#result'});
 
     // Change icon of references -section when collapsing
