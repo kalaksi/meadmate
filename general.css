@@ -1,0 +1,46 @@
+
+div {
+    border: 1px solid #AAA;
+    /* margin: 1px; */
+}
+
+html, body { 
+    height: 99%;
+}
+
+body {
+    padding-top: 2em;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.tight-bottom {
+    margin-bottom: 0.2em;
+}
+
+.text-large {
+    font-size: 22pt; 
+}
+
+#content {
+    min-height: 50%;
+}
+
+#header {
+    min-height: 2em;
+    text-align: center; 
+}
+
+#parameters {
+}
+
+#equation {
+    text-align: center;
+    outline: 0.2em solid #AAA;
+    margin-top: 0.5em;
+}
+
+#references {
+    padding-top: 4em;
+
+}

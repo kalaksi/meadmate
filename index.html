@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Simalaskuri</title>
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="general.css">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="ferment.js"></script>
+</head>
+<body>
+<div id="content" class="container-fluid fill">
+
+<div id="header" class="row">
+    <h3>Simalaskuri</h3>
+</div>
+
+<div class="row">
+
+    <div class="col-xs-12 col-md-4">
+        <div id="parameters" class="form-horizontal">
+            <div class="form-group tight-bottom">
+                <label for="sugar" class="col-sm-5 col-md-6 control-label">How much sugar?</label>
+                <div class="col-sm-5 col-md-6"><div class="input-group">
+                    <input id="sugar" type="number" step="any" min="0" class="form-control input-sm" value="0.0"></input> 
+                    <span class="input-group-addon">grams</span>
+                </div></div>
+            </div>
+            <div class="form-group tight-bottom">
+                <label for="honey" class="col-sm-5 col-md-6 control-label">How much honey?</label>
+                <div class="col-sm-5 col-md-6"><div class="input-group">
+                    <input id="honey" type="number" step="any" min="0" class="form-control input-sm" value="0.0"></input> 
+                    <span class="input-group-addon">grams</span>
+                </div></div>
+            </div>
+            <div class="form-group tight-bottom">
+                <label for="water" class="col-sm-5 col-md-6 control-label">How much water?</label>
+                <div class="col-sm-5 col-md-6"><div class="input-group">
+                    <input id="water" type="number" step="any" min="0" class="form-control input-sm" value="0.0"></input> 
+                    <span class="input-group-addon">litres</span>
+                </div></div>
+            </div>
+            <div class="form-group tight-bottom">
+                <label for="ethanol" class="col-sm-5 col-md-6 control-label">Resulting amount of ethanol</label>
+                <div class="col-sm-5 col-md-6"><div class="input-group">
+                    <input id="ethanol" type="number" step="any" min="0" class="form-control input-sm" value="0.0"></input>
+                    <span class="input-group-addon">litres</span>
+                </div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-8">
+        <div id="equation" class="row">
+            <div class="col-xs-6 col-sm-3 col-md-3"> 
+                <div class="row text-muted" id="equation_sugar">0</div>
+                <div class="row text-large">C<sub>12</sub>H<sub>22</sub>O<sub>11</sub> </div>
+                <div class="row text-muted">Sucrose (sugar)</div>
+            </div>
+            <div class="col-xs-1 col-sm-1 col-md-1">
+                <div class="row">&nbsp;</div>
+                <div class="row text-large">+</div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2">
+                <div class="row text-muted" id="equation_water">0</div>
+                <div class="row text-large"> H<sub>2</sub>O </div>
+                <div class="row text-muted">Water </div>
+            </div>
+            <div class="col-xs-2 col-xs-offset-1 col-sm-1 col-sm-offset-0 col-md-1"> 
+                <div class="row">&nbsp;</div>
+                <div class="row text-large">&rarr;</div>
+            </div>
+            <div class="col-xs-9 col-sm-5 col-md-5"> 
+                <div class="row text-muted" id="equation_ethanol">0</div>
+                <div class="row text-large">4 C<sub>2</sub>H<sub>5</sub>OH + 4 CO<sub>2</sub></div>
+                <div class="row text-muted">Ethanol and carbon dioxide</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="references" class="row">
+    <h4>References</h4>
+    [1] http://www.chegg.com/homework-help/a-small-scale-approach-to-organic-laboratory-techniques-3rd-edition-chapter-16-solutions-9781111789411 <br>
+    [2] http://prosessitekniikka.kpedu.fi/doc-html/alkoholi.html <br>
+    [3] http://periodic.lanl.gov/index.shtml
+</div>
+
+</div>
+
+</body>
+</html>
+
+
