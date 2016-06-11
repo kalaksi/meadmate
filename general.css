@@ -1,17 +1,11 @@
 
-div {
-    border: 1px solid #AAA;
-    /* margin: 1px; */
-}
-
 html, body { 
-    height: 99%;
+    height: 100%;
+    background-image: linear-gradient(0deg, #ff9900, #FFF);
 }
 
 body {
     padding-top: 2em;
-    padding-left: 5%;
-    padding-right: 5%;
 }
 
 .input-group span {
@@ -19,7 +13,7 @@ body {
 }
 
 .tight-bottom {
-    margin-bottom: 0.2em;
+    margin-bottom: 0.4em;
 }
 
 .text-large {
@@ -28,6 +22,7 @@ body {
 
 #content {
     min-height: 50%;
+    max-width: 100em;
 }
 
 #header {
@@ -36,12 +31,22 @@ body {
 }
 
 #parameters {
+    /*
+    Add col-md-12 to form-horziontal div to get padding
+    if you want an outline
+    outline: 0.2em solid #AAA;
+    */
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
 }
 
 #equation {
     text-align: center;
     outline: 0.2em solid #AAA;
     margin-top: 0.5em;
+    background-color: #F5F5F5;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 #result {
@@ -53,8 +58,8 @@ body {
 }
 
 #references {
-    padding-top: 4em;
-    padding-bottom: 1em;
+    padding: 1em;
+    padding-left: 2em;
 }
 
 #references a {
