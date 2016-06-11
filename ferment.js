@@ -9,6 +9,7 @@ var MASS = {
 
 // g/cm^3
 var DENSITY = {
+    'water': 1,
     'ethanol': 0.79
 };
 
@@ -18,18 +19,23 @@ var SUCROSE_TO_ETHANOL_RATIO = 0.95;
 // Ethanol vol-% 
 var YEAST_SURVIVAL_LIMIT = 16.0
 
-function update_calculation(parameter_fields, equation_fields) {
+function update_result_box(ethanol_l, water_l, result_field) {
+
+}
+
+function update_calculation(parameter_fields, calculation_fields) {
     if (typeof parameter_fields.sucrose === 'undefined' ||
         typeof parameter_fields.water === 'undefined') {
         throw Error('Missing or undefined parameter fields');
     }
-    if (typeof equation_fields.sucrose === 'undefined' ||
-        typeof equation_fields.water === 'undefined' ||
-        typeof equation_fields.ethanol === 'undefined') {
-        throw Error('Missing or undefined equation fields');
+    if (typeof calculation_fields.sucrose === 'undefined' ||
+        typeof calculation_fields.water === 'undefined' ||
+        typeof calculation_fields.ethanol === 'undefined' ||
+        typeof calculation_fields.result === 'undefined') {
+        throw Error('Missing or undefined result fields');
     }
 
-    var all_sugar = parseFloat($(parameter_fields.sucrose).val());
+    var all_sugar_g = parseFloat($(parameter_fields.sucrose).val());
 
     // Other possible sucrose sources such as honey
     if (typeof parameter_fields.other_sucrose.amount !== 'undefined') {
@@ -40,12 +46,14 @@ function update_calculation(parameter_fields, equation_fields) {
         else {
             sugar_content = parseFloat($(parameter_fields.other_sucrose.content).val());
         }
-        all_sugar += parseFloat($(parameter_fields.other_sucrose.amount).val()) * sugar_content;
+        all_sugar_g += parseFloat($(parameter_fields.other_sucrose.amount).val()) * sugar_content;
     }
 
-    var amount_sucrose = all_sugar / MASS.sucrose;
-    var amount_water = parseFloat($(parameter_fields.water).val()) * 1000.0 / MASS.water;
-    var amount_ethanol = amount_sucrose * 4.0;
+    // Water is in litres (dm^3)
+    var all_water_l = parseFloat($(parameter_fields.water).val());
+    var all_water_g = all_water_l * 1000 * DENSITY.water;
+    var amount_sucrose = all_sugar_g / MASS.sucrose;
+    var amount_water = all_water_g / MASS.water;
 
     // Consumption of the other depends on which is the bottleneck
     if (amount_water >= amount_sucrose) {
@@ -55,13 +63,18 @@ function update_calculation(parameter_fields, equation_fields) {
         amount_sucrose = amount_water;
     }
 
+    var amount_ethanol = amount_sucrose * 4.0;
+    var consumed_water_g = amount_water * MASS.water;
+    var water_left_l = (all_water_l - (consumed_water_g / DENSITY.water / 1000.0));
     var ethanol_g = (4.0 * SUCROSE_TO_ETHANOL_RATIO * amount_sucrose) * MASS.ethanol;
     var ethanol_l = (ethanol_g * DENSITY.ethanol) / 1000.0
 
-    $(equation_fields.sucrose).html(all_sugar.toFixed(2) + ' g');
-    $(equation_fields.water).html(amount_water.toFixed(2) + ' g');
-    $(equation_fields.ethanol).html(ethanol_g.toFixed(2) + ' g' +
+    $(calculation_fields.sucrose).html(all_sugar_g.toFixed(2) + ' g');
+    $(calculation_fields.water).html(consumed_water_g.toFixed(2) + ' g');
+    $(calculation_fields.ethanol).html(ethanol_g.toFixed(2) + ' g' +
                                     ' (' + ethanol_l.toFixed(2) + ' litres)');
+
+    update_result_box(ethanol_l, water_left_l, calculation_fields.result);
 }
 
 function fermentation_fields(source_fields, destination_fields, with_function) {

@@ -34,15 +34,6 @@
                     <span class="input-group-addon">grams</span>
                 </div></div>
             </div>
-            <!--
-            <div class="form-group tight-bottom">
-                <label for="honey_content" class="col-sm-5 col-md-6 control-label">Sugar content of honey?</label>
-                <div class="col-sm-5 col-md-6"><div class="input-group">
-                    <input id="honey_content" type="number" step="any" min="0" class="form-control input-sm" value="0"></input> 
-                    <span class="input-group-addon">grams</span>
-                </div></div>
-            </div>
-            -->
             <div class="form-group tight-bottom">
                 <label for="water" class="col-sm-5 col-md-6 control-label">How much water?</label>
                 <div class="col-sm-5 col-md-6"><div class="input-group">
@@ -82,16 +73,18 @@
             </div>
             <div class="col-xs-9 col-sm-5 col-md-5"> 
                 <div class="row text-muted" id="equation_ethanol">0</div>
-                <div class="row text-large">4 C<sub>2</sub>H<sub>5</sub>OH + 4 CO<sub>2</sub></div>
+                <div class="row text-large">4 C<sub>2</sub>H<sub>5</sub>OH <span class="text-muted">+ 4 CO<sub>2</sub></span></div>
                 <div class="row text-muted">Ethanol and carbon dioxide</div>
             </div>
         </div>
     </div>
 
-    <div class="col-xs-12 col-md-8">
-        <h4>Result:</h4>
+    <div id="result" class="col-xs-12 col-md-8">
+        <span>Result:</span>
         <div class="progress">
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+            <div class="progress-bar progress-bar-success" role="progressbar"
+                 ria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%;">
+                 70%
             </div>
         </div>
     </div>
@@ -122,7 +115,7 @@
 $(document).ready(function() {
     // IDs for parameter fields and fields which show the calculation results
     fermentation_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': 0.83}},
-                        {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol'});
+                        {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol', 'result': '#result'});
 
     // Change icon of references -section when collapsing
     $('#reference-list').on('show.bs.collapse', function() {
