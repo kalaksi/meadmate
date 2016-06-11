@@ -17,10 +17,51 @@ var DENSITY = {
 var SUCROSE_TO_ETHANOL_RATIO = 0.95;
 
 // Ethanol vol-% 
-var YEAST_SURVIVAL_LIMIT = 16.0
+var YEAST_SURVIVAL_LIMIT = 15.0
 
 function update_result_box(ethanol_l, water_l, result_field) {
+    var percentage = (ethanol_l / water_l) * 100.0;
 
+    if (isNaN(percentage)) {
+        percentage = 0.0;
+    }
+    else if (percentage > 99.99) {
+        percentage = 100.0;
+    }
+
+    var litres = parseFloat(ethanol_l + water_l);
+    var amount_message = litres.toFixed(1) + ' litres';
+    var percentage_message = 'awesome and sweet mead with ' + percentage.toFixed(1) + ' % of alcohol';
+    var progress_bar_class = 'progress-bar-success';
+
+    if (litres < 2.0) {
+        amount_message = 'Barely a crappy ' + litres.toFixed(1) + ' litres';
+    }
+    else if (litres > 30.0) {
+        amount_message = 'A crazy ' + litres.toFixed(1) + ' litres';
+    }
+
+    if (percentage < 2.0) {
+        percentage_message = 'lame and watery mead with only ' + percentage.toFixed(1) + ' % of alcohol';
+    }
+    else if (percentage > (YEAST_SURVIVAL_LIMIT + 4)) {
+        progress_bar_class = 'progress-bar-danger';
+        percentage_message = 'actually impossible-to-ferment mead with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST';
+    }
+    else if (percentage > YEAST_SURVIVAL_LIMIT) {
+        progress_bar_class = 'progress-bar-danger';
+        percentage_message = 'mead-booze with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST';
+    }
+    else if (percentage > 8.0) {
+        progress_bar_class = 'progress-bar-warning';
+        percentage_message = 'pretty strong but fine mead with ' + percentage.toFixed(1) + ' % of alcohol';
+    }
+
+    $(result_field + ' span').html(amount_message + ' of ' + percentage_message);
+    $(result_field + ' div.progress div.progress-bar').css('width', percentage + '%')
+                                                      .html(percentage.toFixed(1) + '%')
+                                                      .removeClass()
+                                                      .addClass('progress-bar ' + progress_bar_class);
 }
 
 function update_calculation(parameter_fields, calculation_fields) {
@@ -66,9 +107,9 @@ function update_calculation(parameter_fields, calculation_fields) {
 
     var amount_ethanol = amount_sucrose * 4.0;
     var consumed_water_g = amount_water * MASS.water;
-    var water_left_l = (all_water_l - (consumed_water_g / DENSITY.water / 1000.0));
+    var water_left_l = all_water_l - (consumed_water_g / DENSITY.water / 1000.0);
     var ethanol_g = (4.0 * SUCROSE_TO_ETHANOL_RATIO * amount_sucrose) * MASS.ethanol;
-    var ethanol_l = (ethanol_g * DENSITY.ethanol) / 1000.0
+    var ethanol_l = ethanol_g / DENSITY.ethanol / 1000.0;
 
     $(calculation_fields.sucrose).html(all_sugar_g.toFixed(2) + ' g');
     $(calculation_fields.water).html(consumed_water_g.toFixed(2) + ' g');

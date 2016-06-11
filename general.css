@@ -44,6 +44,14 @@ body {
     margin-top: 0.5em;
 }
 
+#result {
+    padding-top: 0.5em;
+}
+
+#result span {
+    font-size: large; 
+}
+
 #references {
     padding-top: 4em;
     padding-bottom: 1em;
