@@ -12,6 +12,12 @@ var DENSITY = {
     'ethanol': 0.79
 };
 
+// How much is ideally converted to ethanol
+var SUCROSE_TO_ETHANOL_RATIO = 0.95;
+
+// Ethanol vol-% 
+var YEAST_SURVIVAL_LIMIT = 16.0
+
 function update_calculation(parameter_fields, equation_fields) {
     if (typeof parameter_fields.sucrose === 'undefined' ||
         typeof parameter_fields.water === 'undefined') {
@@ -49,7 +55,7 @@ function update_calculation(parameter_fields, equation_fields) {
         amount_sucrose = amount_water;
     }
 
-    var ethanol_g = (4.0 * amount_sucrose) * MASS.ethanol;
+    var ethanol_g = (4.0 * SUCROSE_TO_ETHANOL_RATIO * amount_sucrose) * MASS.ethanol;
     var ethanol_l = (ethanol_g * DENSITY.ethanol) / 1000.0
 
     $(equation_fields.sucrose).html(all_sugar.toFixed(2) + ' g');
@@ -58,7 +64,7 @@ function update_calculation(parameter_fields, equation_fields) {
                                     ' (' + ethanol_l.toFixed(2) + ' litres)');
 }
 
-function bind_fields(source_fields, destination_fields, with_function) {
+function fermentation_fields(source_fields, destination_fields, with_function) {
     if (typeof with_function === 'undefined') {
         with_function = update_calculation;
     }
@@ -77,10 +83,5 @@ function bind_fields(source_fields, destination_fields, with_function) {
         });
     });
 }
-
-$(document).ready(function() {
-    bind_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': 0.83}},
-                {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol'});
-});
 
 

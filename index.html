@@ -98,6 +98,14 @@
 
 </div>
 
+<script type="text/javascript">
+// IDs for parameter fields and fields which show the calculation results
+$(document).ready(function() {
+    fermentation_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': 0.83}},
+                        {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol'});
+});
+</script>
+
 </body>
 </html>
 
