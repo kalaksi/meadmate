@@ -1,44 +1,82 @@
 
+// per mol
+var MASS = {
+    'water': (2 * 1.008 + 16.00),
+    'carbon_dioxide': (12.01 + 2 * 16.00),
+    'sucrose': (12 * 12.01 + 22 * 1.008 + 11 * 16.00),
+    'ethanol': (2 * 12.01 + 5 * 1.008 + 16.00 + 1.008)
+};
 
-function ferment(sucrose, water) {
-    if (sucrose === undefined || water === undefined) {
-        throw Error('Not enough parameters for fermentation');
+// g/cm^3
+var DENSITY = {
+    'ethanol': 0.79
+};
+
+function update_calculation(parameter_fields, equation_fields) {
+    if (typeof parameter_fields.sucrose === 'undefined' ||
+        typeof parameter_fields.water === 'undefined') {
+        throw Error('Missing or undefined parameter fields');
     }
-    else if (isNaN(parseFloat(sucrose)) || isNan(parseFloat(water))) {
-        throw Error('ferment() needs numbers as parameters');
+    if (typeof equation_fields.sucrose === 'undefined' ||
+        typeof equation_fields.water === 'undefined' ||
+        typeof equation_fields.ethanol === 'undefined') {
+        throw Error('Missing or undefined equation fields');
     }
 
-    // per mol
-    var water_mass = (2 * 1.008 + 16.00);
-    var carbon_dioxide_mass = (12.01 + 2 * 16.00); 
-    var sucrose_mass = (12 * 12.01 + 22 * 1.008 + 11 * 16.00);
-    var ethanol_mass = (2 * 12.01 + 5 * 1.008 + 16.00 + 1.008);
+    var all_sugar = parseFloat($(parameter_fields.sucrose).val());
 
-    var ethanol_density = 0.79; // g/cm^3
+    // Other possible sucrose sources such as honey
+    if (typeof parameter_fields.other_sucrose.amount !== 'undefined') {
+        // content should be either a float or a field id
+        if (!isNaN(parseFloat(parameter_fields.other_sucrose.content))) {
+            sugar_content = parseFloat(parameter_fields.other_sucrose.content);
+        }
+        else {
+            sugar_content = parseFloat($(parameter_fields.other_sucrose.content).val());
+        }
+        all_sugar += parseFloat($(parameter_fields.other_sucrose.amount).val()) * sugar_content;
+    }
+
+    var amount_sucrose = all_sugar / MASS.sucrose;
+    var amount_water = parseFloat($(parameter_fields.water).val()) * 1000.0 / MASS.water;
+    var amount_ethanol = amount_sucrose * 4.0;
+
+    // Consumption of the other depends on which is the bottleneck
+    if (amount_water >= amount_sucrose) {
+        amount_water = amount_sucrose;
+    }
+    else if (amount_water < amount_sucrose) {
+        amount_sucrose = amount_water;
+    }
+
+    var ethanol_g = (4.0 * amount_sucrose) * MASS.ethanol;
+    var ethanol_l = (ethanol_g * DENSITY.ethanol) / 1000.0
+
+    $(equation_fields.sucrose).html(amount_sucrose.toFixed(2) + ' g');
+    $(equation_fields.water).html(amount_water.toFixed(2) + ' g');
+    $(equation_fields.ethanol).html(ethanol_g.toFixed(2) + ' g' +
+                                    ' (' + ethanol_l.toFixed(2) + ' litres)');
 }
 
-function update_fields(readonly_fields) {
-    readonly_fields.forEach(function(value, index) {
-        $(value).html(index);
-    });
-}
-
-function watch_fields(parameter_fields, readonly_fields) {
-    if (parameter_fields.constructor !== Array) {
-        throw Error('watch_fields() needs an array as a parameter');
+function bind_fields(source_fields, destination_fields, with_function) {
+    if (typeof with_function === 'undefined') {
+        with_function = update_calculation;
     }
 
-    parameter_fields.forEach(function(value, index) {
-        $(value).change(function() {
-            update_fields(readonly_fields);
+    // Note that with_function still receives info of ALL fields, not only 1 source
+    $.each(source_fields, function(key, source_id) {
+        $(source_id).ready(function() { 
+            with_function(source_fields, destination_fields)
+        });
+        $(source_id).change(function() { 
+            with_function(source_fields, destination_fields)
         });
     });
 }
 
-function bind_field(parameter_field, equation_field) {
-    $(parameter_field).change(function() {
-        $(equation_field).html(parameter_field.value);
-    });
-}
+$(document).ready(function() {
+    bind_fields({'sucrose': '#sugar', 'water': '#water', 'other_sucrose': {'amount': '#honey', 'content': 0.83}},
+                {'sucrose': '#equation_sugar', 'water': '#equation_water', 'ethanol': '#equation_ethanol'});
+});
 
-bind_field('#sugar', '#equation_sugar');
+
