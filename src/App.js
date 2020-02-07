@@ -1,4 +1,6 @@
 import React from 'react';
+import './index.css';
+import ParameterForm from './Components/ParameterForm';
 
 export default class App extends React.Component {
   render() {
@@ -8,7 +10,7 @@ export default class App extends React.Component {
           <HeaderText/>
         </div>
         <div className="row">
-          <InputForm/>
+          <ParameterForm/>
           <div className="col-xs-12 col-md-8">
             <Equation/>
           </div>
@@ -32,44 +34,10 @@ class HeaderText extends React.Component {
   }
 }
 
-class InputField extends React.Component {
-  static defaultProps = {
-    "input_step": "any",
-    "input_min": 0,
-    "default_value": 0
-  }
-
-  render() {
-    return (
-      <div className="form-group tight-bottom">
-        <label htmlFor="{this.props.id}" className="col-sm-5 col-md-6 control-label">{this.props.label}</label>
-        <div className="col-sm-5 col-md-6"><div className="input-group">
-          <input id="{this.props.id}" type="number" step="{this.props.input_step}" min="{this.props.input_min}" className="form-control input-sm" value="{this.props.default_value}"></input>
-          <span className="input-group-addon">{this.props.units}</span>
-        </div></div>
-      </div>
-    );
-  }
-}
-
-class InputForm extends React.Component {
-  render() {
-    return (
-      <div className="form-horizontal">
-        <InputField id="sugar" label="How much sugar?" input_step="10" units="grams"/>
-        <InputField id="honey" label="How much honey?" input_step="10" units="grams"/>
-        <InputField id="honey-content" label="Content of sugar in honey" default_value="83" units="%"/>
-        <InputField id="water" label="How much water?" units="litres"/>
-      </div>
-    );
-  }
-}
-
-
 class EquationSymbol extends React.Component {
   render() {
     return (
-      <div className="{this.props.className}">
+      <div className={this.props.className}>
         <div className="row">&nbsp;</div>
         <div className="row text-large">{this.props.symbol}</div>
       </div>
@@ -83,7 +51,7 @@ class EquationElement extends React.Component {
   }
   render() {
     return (
-      <div className="{this.props.className}">
+      <div className={this.props.className}>
         <div className="row text-muted">{this.props.amount}</div>
         <div className="row text-large">{this.props.element}</div>
         <div className="row text-muted">{this.props.description}</div>
@@ -100,7 +68,7 @@ class Equation extends React.Component {
         <EquationSymbol className="col-xs-1 col-sm-1 col-md-1" symbol="+"/>
         <EquationElement className="col-xs-4 col-sm-2 col-sm-2"  element="H₂O" description="Water"/>
         <EquationSymbol className="col-xs-2 col-xs-offset-1 col-sm-1 col-sm-offset-0 col-md-1" symbol="&rarr;"/>
-        <EquationElement className="col-xs-9 col-sm-5 col-sm-5" element=">4 C₂H₅OH + 4 CO₂" description="Ethanol and carbon dioxide"/>
+        <EquationElement className="col-xs-9 col-sm-5 col-sm-5" element="4 C₂H₅OH + 4 CO₂" description="Ethanol and carbon dioxide"/>
       </div>
     );
   }
