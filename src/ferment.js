@@ -144,13 +144,11 @@ function fermentation_fields(source_fields, destination_fields, with_function) {
         if (typeof source_id.amount !== 'undefined') {
             source_id = source_id.amount;
         }
-        $(source_id).ready(function() { 
+        $(source_id).ready(function() {
             with_function(source_fields, destination_fields)
         });
-        $(source_id).change(function() { 
+        $(source_id).change(function() {
             with_function(source_fields, destination_fields)
         });
     });
 }
-
-
