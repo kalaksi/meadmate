@@ -13,28 +13,52 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// per mol
-var MASS = {
+// g/mol
+const MASS_PER_MOL = {
     'water': (2 * 1.008 + 16.00),
     'carbon_dioxide': (12.01 + 2 * 16.00),
     'sucrose': (12 * 12.01 + 22 * 1.008 + 11 * 16.00),
     'ethanol': (2 * 12.01 + 5 * 1.008 + 16.00 + 1.008)
 };
-
 // g/cm^3
-var DENSITY = {
+const DENSITY = {
     'water': 1,
     'ethanol': 0.79
 };
-
 // How much is ideally converted to ethanol
-var SUCROSE_TO_ETHANOL_RATIO = 0.95;
-
+const SUCROSE_TO_ETHANOL_RATIO = 0.95;
 // Ethanol vol-% 
-var YEAST_SURVIVAL_LIMIT = 15.0
+const YEAST_SURVIVAL_LIMIT = 15.0
 
-function update_result_box(ethanol_l, water_l, result_field) {
-    var percentage = (ethanol_l / water_l) * 100.0;
+/**
+ * 
+ * @param {*} target Target number to look for in hash keys.
+ * @param {*} hash The key-value store we're looking the keys in.
+ */
+function select_response(target, hash) {
+    let hash_keys = Object.keys(hash);
+
+    let selected = hash_keys.reduce(function(previous, current) {
+        if (target - parseFloat(current) > 0) {
+            return current;
+        }
+        else {
+            return previous;
+        }
+    });
+    return selected;
+}
+
+/**
+ * 
+ * @param {*} ethanol_amount Amount of ethanol, in litres.
+ * @param {*} water_amount Amount of water, in litres.
+ */
+function get_response(ethanol_amount, water_amount) {
+
+    // vol-%
+    let percentage = (ethanol_amount / water_amount) * 100.0;
+    let litres = ethanol_amount + water_amount;
 
     if (isNaN(percentage)) {
         percentage = 0.0;
@@ -43,112 +67,67 @@ function update_result_box(ethanol_l, water_l, result_field) {
         percentage = 100.0;
     }
 
-    var litres = parseFloat(ethanol_l + water_l);
-    var amount_message = litres.toFixed(1) + ' litres';
-    var percentage_message = 'awesome and sweet mead with ' + percentage.toFixed(1) + ' % of alcohol';
-    var progress_bar_class = 'progress-bar-success';
-
-    if (litres < 2.0) {
-        amount_message = 'Barely a crappy ' + litres.toFixed(1) + ' litres';
-    }
-    else if (litres > 30.0) {
-        amount_message = 'A crazy ' + litres.toFixed(1) + ' litres';
-    }
-
-    if (percentage < 2.0) {
-        percentage_message = 'lame and watery mead with only ' + percentage.toFixed(1) + ' % of alcohol';
-    }
-    else if (percentage > (YEAST_SURVIVAL_LIMIT + 4)) {
-        progress_bar_class = 'progress-bar-danger';
-        percentage_message = 'actually impossible-to-ferment mead with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST';
-    }
-    else if (percentage > YEAST_SURVIVAL_LIMIT) {
-        progress_bar_class = 'progress-bar-danger';
-        percentage_message = 'mead-booze with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST';
-    }
-    else if (percentage > 9.0) {
-        progress_bar_class = 'progress-bar-warning';
-        percentage_message = 'pretty strong but fine mead with ' + percentage.toFixed(1) + ' % of alcohol';
+    let responses = {
+        'amount': {
+            '0': 'Barely a crappy ' + litres.toFixed(1) + ' litres',
+            '2': litres.toFixed(1) + ' litres',
+            '30': 'A crazy ' + litres.toFixed(1) + ' litres',
+        },
+        'percentage': {
+            '0': 'lame and watery mead with only ' + percentage.toFixed(1) + ' % of alcohol',
+            '2': 'awesome and sweet mead with ' + percentage.toFixed(1) + ' % of alcohol',
+            '9': 'pretty strong but fine mead with ' + percentage.toFixed(1) + ' % of alcohol',
+            '15': 'mead-booze with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST',
+            '19': 'actually impossible-to-ferment mead with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST',
+        },
+        'status': {
+            '0': 'success',
+            '9': 'warning',
+            '15': 'danger',
+        },
     }
 
-    $(result_field + ' span').html(amount_message + ' of ' + percentage_message);
-    $(result_field + ' div.progress div.progress-bar').css('width', percentage + '%')
-                                                      .html(percentage.toFixed(1) + '%')
-                                                      .removeClass()
-                                                      .addClass('progress-bar ' + progress_bar_class);
+    return {
+        'message': responses.amount[select_response(litres, responses.amount)] +
+                   ' of ' + responses.percentage[select_response(percentage, responses.percentage)],
+        'status': response.status,
+    };
 }
 
-function update_calculation(parameter_fields, calculation_fields) {
-    if (typeof parameter_fields.sucrose === 'undefined' ||
-        typeof parameter_fields.water === 'undefined') {
-        throw Error('Missing or undefined parameter fields');
-    }
-    if (typeof calculation_fields.sucrose === 'undefined' ||
-        typeof calculation_fields.water === 'undefined' ||
-        typeof calculation_fields.ethanol === 'undefined' ||
-        typeof calculation_fields.result === 'undefined') {
-        throw Error('Missing or undefined result fields');
-    }
+/** 
+ * 
+ * @param sucrose Sucrose, in grams.
+ * @param water Amount of water, in litres (dm^3).
+ */
+function calculate(all_sucrose, all_water, units_in_mols=false) {
+    // Begin with optimistic values. Units in mols.
+    let consumption = {
+        'sucrose': all_sucrose / MASS.sucrose,
+        'water': (all_water * 1000 * DENSITY.water) / MASS.water,
+    };
 
-    var all_sugar_g = parseFloat($(parameter_fields.sucrose).val());
+    // Consumption of the other depends directly on which is the bottleneck
+    consumption.sucrose = min(consumption.water, consumption.sucrose);
+    // Not 100% is usually converted to ethanol.
+    consumption.sucrose *= SUCROSE_TO_ETHANOL_RATIO;
 
-    // Other possible sucrose sources such as honey
-    if (typeof parameter_fields.other_sucrose.amount !== 'undefined') {
-        // content should be either a float or a field id
-        if (!isNaN(parseFloat(parameter_fields.other_sucrose.content))) {
-            sugar_content = parseFloat(parameter_fields.other_sucrose.content);
-        }
-        else {
-            // Field value is a percentage
-            sugar_content = parseFloat($(parameter_fields.other_sucrose.content).val()) / 100.0;
-        }
-        all_sugar_g += parseFloat($(parameter_fields.other_sucrose.amount).val()) * sugar_content;
-    }
+    consumption.water = consumption.sucrose;
 
-    // Water is in litres (dm^3)
-    var all_water_l = parseFloat($(parameter_fields.water).val());
-    var all_water_g = all_water_l * 1000 * DENSITY.water;
-    var amount_sucrose = all_sugar_g / MASS.sucrose;
-    var amount_water = all_water_g / MASS.water;
+    // in mols
+    let product = {
+        'ethanol': consumption.sucrose * 4,
+        'carbon_dioxide': consumption.sucrose * 4
+    };
 
-    // Consumption of the other depends on which is the bottleneck
-    if (amount_water >= amount_sucrose) {
-        amount_water = amount_sucrose;
-    }
-    else if (amount_water < amount_sucrose) {
-        amount_sucrose = amount_water;
+    if (units_in_mols === false) {
+        consumption.sucrose *= MASS.sucrose; // grams
+        consumption.water = consumption.water * MASS.water / DENSITY.water/ 1000; // litres
+        product.ethanol *= MASS.ethanol; // grams
+        product.water = product.water * MASS.water / DENSITY.ethanol / 1000; // litres
     }
 
-    var amount_ethanol = amount_sucrose * 4.0;
-    var consumed_water_g = amount_water * MASS.water;
-    var water_left_l = all_water_l - (consumed_water_g / DENSITY.water / 1000.0);
-    var ethanol_g = (4.0 * SUCROSE_TO_ETHANOL_RATIO * amount_sucrose) * MASS.ethanol;
-    var ethanol_l = ethanol_g / DENSITY.ethanol / 1000.0;
-
-    $(calculation_fields.sucrose).html(all_sugar_g.toFixed(2) + ' g');
-    $(calculation_fields.water).html(consumed_water_g.toFixed(2) + ' g');
-    $(calculation_fields.ethanol).html(ethanol_g.toFixed(2) + ' g' +
-                                    ' (' + ethanol_l.toFixed(2) + ' litres)');
-
-    update_result_box(ethanol_l, water_left_l, calculation_fields.result);
-}
-
-function fermentation_fields(source_fields, destination_fields, with_function) {
-    if (typeof with_function === 'undefined') {
-        with_function = update_calculation;
-    }
-
-    // Note that with_function still receives info of ALL fields, not only 1 source
-    $.each(source_fields, function(key, source_id) {
-        // Special case of 'other_sucrose'
-        if (typeof source_id.amount !== 'undefined') {
-            source_id = source_id.amount;
-        }
-        $(source_id).ready(function() {
-            with_function(source_fields, destination_fields)
-        });
-        $(source_id).change(function() {
-            with_function(source_fields, destination_fields)
-        });
-    });
+    return {
+        'consumption': consumption,
+        'product': product
+    };
 }
