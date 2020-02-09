@@ -31,9 +31,10 @@ const SUCROSE_TO_ETHANOL_RATIO = 0.95;
 const YEAST_SURVIVAL_LIMIT = 15.0
 
 /**
- * 
+ * Find the closest numeric key to `target` in a hash without exceeding `target`.
  * @param {*} target Target number to look for in hash keys.
- * @param {*} hash The key-value store we're looking the keys in.
+ * @param {*} hash The key-value store we're looking the keys in. Keys must be numeric.
+ * @return The hash key.
  */
 function select_response(target, hash) {
     let hash_keys = Object.keys(hash);
@@ -54,7 +55,7 @@ function select_response(target, hash) {
  * @param {*} ethanol_amount Amount of ethanol, in litres.
  * @param {*} water_amount Amount of water, in litres.
  */
-function get_response(ethanol_amount, water_amount) {
+function rate_my_mead(ethanol_amount, water_amount) {
 
     // vol-%
     let percentage = (ethanol_amount / water_amount) * 100.0;
@@ -90,7 +91,7 @@ function get_response(ethanol_amount, water_amount) {
     return {
         'message': responses.amount[select_response(litres, responses.amount)] +
                    ' of ' + responses.percentage[select_response(percentage, responses.percentage)],
-        'status': response.status,
+        'status': responses.status,
     };
 }
 
@@ -99,15 +100,15 @@ function get_response(ethanol_amount, water_amount) {
  * @param sucrose Sucrose, in grams.
  * @param water Amount of water, in litres (dm^3).
  */
-function calculate(all_sucrose, all_water, units_in_mols=false) {
+export default function ferment(all_sucrose, all_water, units_in_mols=false) {
     // Begin with optimistic values. Units in mols.
     let consumption = {
-        'sucrose': all_sucrose / MASS.sucrose,
-        'water': (all_water * 1000 * DENSITY.water) / MASS.water,
+        'sucrose': all_sucrose / MASS_PER_MOL.sucrose,
+        'water': (all_water * 1000 * DENSITY.water) / MASS_PER_MOL.water,
     };
 
     // Consumption of the other depends directly on which is the bottleneck
-    consumption.sucrose = min(consumption.water, consumption.sucrose);
+    consumption.sucrose = Math.min(consumption.water, consumption.sucrose);
     // Not 100% is usually converted to ethanol.
     consumption.sucrose *= SUCROSE_TO_ETHANOL_RATIO;
 
@@ -120,11 +121,12 @@ function calculate(all_sucrose, all_water, units_in_mols=false) {
     };
 
     if (units_in_mols === false) {
-        consumption.sucrose *= MASS.sucrose; // grams
-        consumption.water = consumption.water * MASS.water / DENSITY.water/ 1000; // litres
-        product.ethanol *= MASS.ethanol; // grams
-        product.water = product.water * MASS.water / DENSITY.ethanol / 1000; // litres
+        consumption.sucrose *= MASS_PER_MOL.sucrose; // grams
+        consumption.water = consumption.water * MASS_PER_MOL.water / DENSITY.water/ 1000; // litres
+        product.ethanol *= MASS_PER_MOL.ethanol; // grams
+        product.water = product.water * MASS_PER_MOL.water / DENSITY.ethanol / 1000; // litres
     }
+    console.log(consumption);
 
     return {
         'consumption': consumption,

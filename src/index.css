@@ -9,18 +9,6 @@ body {
     padding-right: 1em;
 }
 
-.input-group span {
-    min-width: 4em;
-}
-
-.tight-bottom {
-    margin-bottom: 0.4em;
-}
-
-.text-large {
-    font-size: 22pt;
-}
-
 #content {
     min-height: 50%;
     max-width: 100em;
@@ -32,11 +20,6 @@ body {
 }
 
 #parameters {
-    /*
-    Add col-md-12 to form-horziontal div to get padding
-    if you want an outline
-    outline: 0.2em solid #AAA;
-    */
     padding-top: 0.75em;
     padding-bottom: 0.75em;
 }
@@ -46,8 +29,7 @@ body {
     outline: 0.2em solid #AAA;
     margin-top: 0.5em;
     background-color: #F5F5F5;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+    padding: 1.5em;
 }
 
 #result {

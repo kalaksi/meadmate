@@ -1,28 +1,77 @@
 import React from 'react';
 import './index.css';
 import ParameterForm from './Components/ParameterForm';
+import ferment from './ferment';
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      equation: {
+        water: 0.0,
+        sucrose: 0.0,
+        ethanol: 0.0,
+        carbon_dioxide: 0.0,
+      },
+      parameters: {
+        sugar: 0,
+        honey: 0,
+        honeycontent: 83,
+        water: 0,
+      },
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
   render() {
     return (
       <div id="content" className="container-fluid fill">
-        <div className="row">
+        <div id="header" className="row">
           <HeaderText/>
         </div>
         <div className="row">
-          <ParameterForm/>
-          <div className="col-xs-12 col-md-8">
-            <Equation/>
+          <div id="parameters" onChange={this.handleChange}>
+            <ParameterForm onChange={this.handleChange}
+                           sugar={this.state.parameters.sugar}
+                           honey={this.state.parameters.honey}
+                           honeycontent={this.state.parameters.honeycontent}
+                           water={this.state.parameters.water} />
           </div>
-          <div className="col-xs-12 col-md-8">
-            <AlcoholBar/>
+          <div id="equation" className="col-xs-12 col-md-8">
+            <Equation water={this.state.equation.water}
+                      sucrose={this.state.equation.sucrose}
+                      ethanol={this.state.equation.ethanol}
+                      carbon_dioxide={this.state.equation.carbon_dioxide} />
+          </div>
+          <div id="result" className="col-xs-12 col-md-8">
+            <ResultBox/>
           </div>
         </div>
-        <div className="row">
+        <div id="references" className="row">
           <References/>
         </div>
       </div>
     );
+  }
+
+  handleChange(event) {
+    let newState = {
+      parameters: this.state.parameters,
+      equation: this.state.equation,
+    }
+
+    newState["parameters"][event.target.id] = parseFloat(event.target.value).toFixed(1);
+
+    // Calculate the equation fields
+    let all_sucrose = this.state.parameters.sugar + (this.state.parameters.honey * this.state.parameters.honeycontent);
+    let result = ferment(all_sucrose, this.state.parameters.water);
+    newState["equation"]["water"] = result.consumption.water.toFixed(2);
+    newState["equation"]["sucrose"] = result.consumption.sucrose.toFixed(2);
+    newState["equation"]["ethanol"] = result.product.ethanol.toFixed(2);
+
+    console.log(newState);
+    this.setState(newState);
   }
 }
 
@@ -46,9 +95,6 @@ class EquationSymbol extends React.Component {
 }
 
 class EquationElement extends React.Component {
-  static defaultProps = {
-    "amount": 0,
-  }
   render() {
     return (
       <div className={this.props.className}>
@@ -64,18 +110,20 @@ class Equation extends React.Component {
   render() {
     return (
       <div className="row">
-        <EquationElement className="col-xs-6 col-sm-3 col-sm-3" element="C₁₂H₂₂O₁₁" description="Sucrose (sugar)"/>
+        <EquationElement className="col-xs-6 col-sm-3 col-md-3" element="C₁₂H₂₂O₁₁" description="Sucrose (sugar)" amount={this.props.sucrose}/>
         <EquationSymbol className="col-xs-1 col-sm-1 col-md-1" symbol="+"/>
-        <EquationElement className="col-xs-4 col-sm-2 col-sm-2"  element="H₂O" description="Water"/>
-        <EquationSymbol className="col-xs-2 col-xs-offset-1 col-sm-1 col-sm-offset-0 col-md-1" symbol="&rarr;"/>
-        <EquationElement className="col-xs-9 col-sm-5 col-sm-5" element="4 C₂H₅OH + 4 CO₂" description="Ethanol and carbon dioxide"/>
+        <EquationElement className="col-xs-4 col-sm-2 col-md-2"  element="H₂O" description="Water" amount={this.props.water}/>
+        <EquationSymbol className="col-xs-2 col-sm-1 col-md-1" symbol="&rarr;"/>
+        <EquationElement className="col-xs-6 col-sm-2 col-md-2" element="4C₂H₅OH" description="Ethanol" amount={this.props.ethanol}/>
+        <EquationSymbol className="col-xs-1 col-sm-1 col-md-1" symbol="+"/>
+        <EquationElement className="col-xs-4 col-sm-2 col-md-2" element="4CO₂" description="... and carbon dioxide" amount={this.props.carbon_dioxide}/>
       </div>
     );
   }
 }
 
 
-class AlcoholBar extends React.Component {
+class ResultBox extends React.Component {
   static defaultProps = {
     "progress": 0,
   }
