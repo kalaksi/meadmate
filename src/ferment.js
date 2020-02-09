@@ -47,7 +47,7 @@ function select_response(target, hash) {
             return previous;
         }
     });
-    return selected;
+    return hash[selected];
 }
 
 /**
@@ -55,7 +55,7 @@ function select_response(target, hash) {
  * @param {*} ethanol_amount Amount of ethanol, in litres.
  * @param {*} water_amount Amount of water, in litres.
  */
-function rate_my_mead(ethanol_amount, water_amount) {
+export function rate_my_mead(ethanol_amount, water_amount) {
 
     // vol-%
     let percentage = (ethanol_amount / water_amount) * 100.0;
@@ -89,9 +89,10 @@ function rate_my_mead(ethanol_amount, water_amount) {
     }
 
     return {
-        'message': responses.amount[select_response(litres, responses.amount)] +
-                   ' of ' + responses.percentage[select_response(percentage, responses.percentage)],
-        'status': responses.status,
+        'message': select_response(litres, responses.amount) +
+                   ' of ' + select_response(percentage, responses.percentage),
+        'status': select_response(percentage, responses.status),
+        'percentage': percentage,
     };
 }
 
@@ -100,39 +101,36 @@ function rate_my_mead(ethanol_amount, water_amount) {
  * @param sucrose Sucrose, in grams.
  * @param water Amount of water, in litres (dm^3).
  */
-export default function ferment(all_sucrose, all_water, units_in_mols=false) {
+export function ferment(all_sucrose, all_water, units_in_mols=false) {
     // Begin with optimistic values. Units in mols.
-    let consumption = {
+    let consumed = {
         'sucrose': all_sucrose / MASS_PER_MOL.sucrose,
         'water': (all_water * 1000 * DENSITY.water) / MASS_PER_MOL.water,
     };
 
     // Consumption of the other depends directly on which is the bottleneck
-    consumption.sucrose = Math.min(consumption.water, consumption.sucrose);
+    consumed.sucrose = Math.min(consumed.water, consumed.sucrose);
     // Not 100% is usually converted to ethanol.
-    consumption.sucrose *= SUCROSE_TO_ETHANOL_RATIO;
+    consumed.sucrose *= SUCROSE_TO_ETHANOL_RATIO;
 
-    consumption.water = consumption.sucrose;
-
+    consumed.water = consumed.sucrose;
 
     // in mols
     let product = {
-        'ethanol': consumption.sucrose * 4,
-        'carbon_dioxide': consumption.sucrose * 4
+        'ethanol': consumed.sucrose * 4,
+        'carbon_dioxide': consumed.sucrose * 4
     };
 
     if (units_in_mols === false) {
-        consumption.sucrose *= MASS_PER_MOL.sucrose; // grams
-        consumption.water = consumption.water * MASS_PER_MOL.water / DENSITY.water / 1000; // litres
+        consumed.sucrose *= MASS_PER_MOL.sucrose; // grams
+        consumed.water = consumed.water * MASS_PER_MOL.water / DENSITY.water / 1000; // litres
         product.ethanol *= MASS_PER_MOL.ethanol; // grams
-        product.water = product.water * MASS_PER_MOL.water / DENSITY.ethanol / 1000; // litres
+        product.ethanol_l = product.ethanol / DENSITY.ethanol / 1000; // litres
         product.carbon_dioxide *= MASS_PER_MOL.carbon_dioxide; // grams
     }
     
-    console.log(consumption);
-
     return {
-        'consumption': consumption,
-        'product': product
+        'consumed': consumed,
+        'product': product,
     };
 }
