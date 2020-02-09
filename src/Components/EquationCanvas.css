@@ -1,0 +1,16 @@
+
+.white-canvas {
+    text-align: center;
+    outline: 0.2em solid #AAA;
+    background-color: #F5F5F5;
+    height: 100%;
+}
+
+.white-canvas-cell {
+    padding-top: 1.0em;
+    padding-bottom: 1.0em;
+}
+
+.text-large {
+    font-size: 2rem;
+}
