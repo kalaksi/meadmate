@@ -3,34 +3,13 @@ html, body {
     background-image: linear-gradient(0deg, #ff9900, #FFF);
 }
 
-body {
-    padding-top: 2em;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
 #content {
     min-height: 50%;
     max-width: 100em;
 }
 
-#parameters {
-    margin-top: 1.5em;
-}
-
-#equation {
-    margin-top: 1.6em;
-    margin-bottom: 0.5em;
-}
-
 #result span {
     font-size: large;
-}
-
-#references {
-    padding-top: 1em;
-    padding: 1em;
-    padding-left: 2em;
 }
 
 #references a {
