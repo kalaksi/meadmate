@@ -23,9 +23,9 @@ class InputField extends React.Component {
 
   render() {
     return (
-      <div className="form-group tight-bottom">
-        <label htmlFor={this.props.id} className="col-sm-5 col-md-6 control-label">{this.props.label}</label>
-        <div className="col-sm-5 col-md-6">
+      <div className="form-row tight-bottom">
+        <label htmlFor={this.props.id} className="col-form-label col-xs-12 col-sm-5 col-md-6">{this.props.label}</label>
+        <div className="col-xs-12 col-sm-5 col-md-6">
           <div className="input-group">
             <input id={this.props.id} type="number" step={this.props.input_step} min={this.props.input_min}
                    className="form-control input-sm" value={this.props.value}></input>

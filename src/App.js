@@ -9,16 +9,16 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       equation: {
-        water: 0.0,
-        sucrose: 0.0,
-        ethanol: 0.0,
-        carbon_dioxide: 0.0,
+        water: "0.00",
+        sucrose: "0.00",
+        ethanol: "0.00",
+        carbon_dioxide: "0.00",
       },
       parameters: {
-        sugar: 0,
-        honey: 0,
-        honeycontent: 83,
-        water: 0,
+        sugar: "0",
+        honey: "0",
+        honeycontent: "83",
+        water: "0",
       },
     };
 
@@ -28,24 +28,24 @@ export default class App extends React.Component {
   render() {
     return (
       <div id="content" className="container-fluid fill">
-        <div id="header" className="row">
+        <div id="header" className="row page-header">
           <HeaderText/>
         </div>
         <div className="row">
-          <div id="parameters" onChange={this.handleChange}>
+          <div id="parameters" className="col-xs-12 col-sm-6 col-md-4" onChange={this.handleChange}>
             <ParameterForm onChange={this.handleChange}
                            sugar={this.state.parameters.sugar}
                            honey={this.state.parameters.honey}
                            honeycontent={this.state.parameters.honeycontent}
                            water={this.state.parameters.water} />
           </div>
-          <div id="equation" className="col-xs-12 col-md-8">
+          <div id="equation" className="col-xs-12 col-sm-6 col-md-8">
             <EquationCanvas water={this.state.equation.water}
                             sucrose={this.state.equation.sucrose}
                             ethanol={this.state.equation.ethanol}
                             carbon_dioxide={this.state.equation.carbon_dioxide} />
           </div>
-          <div id="result" className="col-xs-12 col-md-8">
+          <div id="result" className="col-xs-12 col-sm-12 col-md-12">
             <ResultBox/>
           </div>
         </div>
@@ -62,7 +62,8 @@ export default class App extends React.Component {
       equation: this.state.equation,
     }
 
-    newState["parameters"][event.target.id] = parseFloat(event.target.value).toFixed(1);
+    // Invalid new values are replaced with zero
+    newState["parameters"][event.target.id] = parseInt(event.target.value) || 0;
 
     // Calculate the equation fields
     let all_sucrose = this.state.parameters.sugar + (this.state.parameters.honey * this.state.parameters.honeycontent);
@@ -70,6 +71,7 @@ export default class App extends React.Component {
     newState["equation"]["water"] = result.consumption.water.toFixed(2);
     newState["equation"]["sucrose"] = result.consumption.sucrose.toFixed(2);
     newState["equation"]["ethanol"] = result.product.ethanol.toFixed(2);
+    newState["equation"]["carbon_dioxide"] = result.product.carbon_dioxide.toFixed(2);
 
     console.log(newState);
     this.setState(newState);
@@ -79,7 +81,7 @@ export default class App extends React.Component {
 class HeaderText extends React.Component {
   render() {
     return (
-      <h1>MeadMate</h1>
+      <h1 className="w-100 text-center">MeadMate</h1>
     );
   }
 }

@@ -114,6 +114,7 @@ export default function ferment(all_sucrose, all_water, units_in_mols=false) {
 
     consumption.water = consumption.sucrose;
 
+
     // in mols
     let product = {
         'ethanol': consumption.sucrose * 4,
@@ -122,10 +123,12 @@ export default function ferment(all_sucrose, all_water, units_in_mols=false) {
 
     if (units_in_mols === false) {
         consumption.sucrose *= MASS_PER_MOL.sucrose; // grams
-        consumption.water = consumption.water * MASS_PER_MOL.water / DENSITY.water/ 1000; // litres
+        consumption.water = consumption.water * MASS_PER_MOL.water / DENSITY.water / 1000; // litres
         product.ethanol *= MASS_PER_MOL.ethanol; // grams
         product.water = product.water * MASS_PER_MOL.water / DENSITY.ethanol / 1000; // litres
+        product.carbon_dioxide *= MASS_PER_MOL.carbon_dioxide; // grams
     }
+    
     console.log(consumption);
 
     return {
