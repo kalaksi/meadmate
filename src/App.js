@@ -1,6 +1,7 @@
 import React from 'react';
 import './index.css';
 import ParameterForm from './Components/ParameterForm';
+import EquationCanvas from './Components/EquationCanvas';
 import ferment from './ferment';
 
 export default class App extends React.Component {
@@ -39,10 +40,10 @@ export default class App extends React.Component {
                            water={this.state.parameters.water} />
           </div>
           <div id="equation" className="col-xs-12 col-md-8">
-            <Equation water={this.state.equation.water}
-                      sucrose={this.state.equation.sucrose}
-                      ethanol={this.state.equation.ethanol}
-                      carbon_dioxide={this.state.equation.carbon_dioxide} />
+            <EquationCanvas water={this.state.equation.water}
+                            sucrose={this.state.equation.sucrose}
+                            ethanol={this.state.equation.ethanol}
+                            carbon_dioxide={this.state.equation.carbon_dioxide} />
           </div>
           <div id="result" className="col-xs-12 col-md-8">
             <ResultBox/>
@@ -82,46 +83,6 @@ class HeaderText extends React.Component {
     );
   }
 }
-
-class EquationSymbol extends React.Component {
-  render() {
-    return (
-      <div className={this.props.className}>
-        <div className="row">&nbsp;</div>
-        <div className="row text-large">{this.props.symbol}</div>
-      </div>
-    );
-  }
-}
-
-class EquationElement extends React.Component {
-  render() {
-    return (
-      <div className={this.props.className}>
-        <div className="row text-muted">{this.props.amount}</div>
-        <div className="row text-large">{this.props.element}</div>
-        <div className="row text-muted">{this.props.description}</div>
-      </div>
-    );
-  }
-}
-
-class Equation extends React.Component {
-  render() {
-    return (
-      <div className="row">
-        <EquationElement className="col-xs-6 col-sm-3 col-md-3" element="C₁₂H₂₂O₁₁" description="Sucrose (sugar)" amount={this.props.sucrose}/>
-        <EquationSymbol className="col-xs-1 col-sm-1 col-md-1" symbol="+"/>
-        <EquationElement className="col-xs-4 col-sm-2 col-md-2"  element="H₂O" description="Water" amount={this.props.water}/>
-        <EquationSymbol className="col-xs-2 col-sm-1 col-md-1" symbol="&rarr;"/>
-        <EquationElement className="col-xs-6 col-sm-2 col-md-2" element="4C₂H₅OH" description="Ethanol" amount={this.props.ethanol}/>
-        <EquationSymbol className="col-xs-1 col-sm-1 col-md-1" symbol="+"/>
-        <EquationElement className="col-xs-4 col-sm-2 col-md-2" element="4CO₂" description="... and carbon dioxide" amount={this.props.carbon_dioxide}/>
-      </div>
-    );
-  }
-}
-
 
 class ResultBox extends React.Component {
   static defaultProps = {
