@@ -4,21 +4,22 @@ MeadMate (a.k.a. "Simalaskuri" in finnish) is a small web page for calculating a
 The motivation for creating this was partly to get to know the chemical reactions, partly to get a proper calculator for my own needs and partly to learn how to write web applications.  
 
 **2020 Update**  
-MeadMate was rewritten in February 2020 and now uses ReactJS as the JavaScript framework and Bootstrap 4 for styling.  
-Therefore, it can now also be run independently with NodeJS.  
+MeadMate was rewritten in February 2020 and now uses ReactJS as the JavaScript framework and Bootstrap 4 for styling. Therefore, it can now also be run independently with NodeJS.  
+Also, there are still some minor issues to be ironed out.  
 
 # Running
 Just like any other NodeJS application. For example:
 ```
+$ npm install
 $ npm start
 ```
 
 (Better documentation may or may not arrive later)
 
 ## Screenshots
-TODO
-
-Older screenshots:
+TODO  
+  
+Older screenshots:  
 <img src="ui-extra-small.png" alt="Extra small" width="160">
 <img src="ui-medium.png" alt="Medium" width="300">
 <img src="ui-large.png" alt="Large" width="360">
