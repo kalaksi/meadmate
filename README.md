@@ -7,13 +7,13 @@ The motivation for creating this was partly to get to know the chemical reaction
 MeadMate was rewritten in February 2020 and now uses ReactJS as the JavaScript framework and Bootstrap 4 for styling.  
 Therefore, it can now also be run independently with NodeJS.  
 
-# Deploying
-## Docker
-A `Dockerfile` and an example file for `docker-compose`.
-TODO
+# Running
+Just like any other NodeJS application. For example:
+```
+$ npm start
+```
 
-## Manually
-TODO
+(Better documentation may or may not arrive later)
 
 ## Screenshots
 TODO
