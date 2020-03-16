@@ -8,24 +8,16 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      equation: {
-        water: "0.00",
-        sucrose: "0.00",
-        ethanol: "0.00",
-        carbon_dioxide: "0.00",
-      },
       parameters: {
         sugar: "0",
         honey: "0",
-        honeycontent: "0",
+        honeycontent: "83",
         water: "0",
       },
-      result: {
-        message: '',
-        status: 'success',
-        percentage: 0,
-      },
     };
+
+    // Fill in the rest of the state ("result" and "equation") using the parameter fields.
+    this.state = this.calculateFullState(this.state.parameters);
 
     this.handleChange = this.handleChange.bind(this);
   }
@@ -61,30 +53,33 @@ export default class App extends React.Component {
   }
 
   handleChange(event) {
-    let newState = { ...this.state }
-
+    let newParameters = { ...this.state.parameters };
     // Invalid new values are replaced with zero
-    newState["parameters"][event.target.id] = parseInt(event.target.value) || 0;
+    newParameters[event.target.id] = parseInt(event.target.value) || 0;
+    this.setState(this.calculateFullState(newParameters));
+  }
+
+  calculateFullState = (parameters) => {
+    let newState = { 
+      parameters: parameters,
+    };
 
     // Calculate the equation fields
-    let all_sucrose = this.state.parameters.sugar + (this.state.parameters.honey * this.state.parameters.honeycontent);
+    let all_sucrose = this.state.parameters.sugar + (this.state.parameters.honey * (this.state.parameters.honeycontent / 100) );
     let result = ferment(all_sucrose, this.state.parameters.water);
-    newState.equation.water = result.consumed.water.toFixed(2);
-    newState.equation.sucrose = result.consumed.sucrose.toFixed(2);
-    newState.equation.ethanol = result.product.ethanol_l.toFixed(2);
-    newState.equation.carbon_dioxide = result.product.carbon_dioxide.toFixed(2);
+    newState.equation = {
+      water: result.consumed.water.toFixed(2),
+      sucrose: result.consumed.sucrose.toFixed(2),
+      ethanol: result.product.ethanol_l.toFixed(2),
+      carbon_dioxide: result.product.carbon_dioxide.toFixed(2),
+    };
 
     // Rate the mead
-    let rating = rate_my_mead(
-      parseFloat(result.product.ethanol_l),
-      // Water left after the process
-      (parseFloat(newState.parameters.water) - result.consumed.water)
-    );
-    newState.result = {...rating }
+    // Leaves out water consumed in the process.
+    newState.result = rate_my_mead(parseFloat(result.product.ethanol_l), (parseFloat(newState.parameters.water) - result.consumed.water));
     newState.result.percentage = newState.result.percentage.toFixed(1);
-
-    this.setState(newState);
-  }
+    return newState;
+  } 
 }
 
 class HeaderText extends React.Component {
@@ -105,7 +100,7 @@ class ResultBox extends React.Component {
         <div>
           {this.props.message}
         </div>
-        <div className="progress">
+        <div className="progress" style={{height: "2.0em"}}>
           <div className={"progress-bar bg-"+this.props.status} role="progressbar" style={barStyle}>
             {this.props.percentage}%
           </div>
@@ -117,22 +112,15 @@ class ResultBox extends React.Component {
 
 class References extends React.Component {
   render() {
-    let glyphiconClass = "glyphicon-menu-down";
     return (
-      <div>
-        <div className="row">
-          <a data-toggle="collapse" href="#reference-list" aria-expanded="false" aria-controls="reference-list">
-            <span className={"glyphicon " + glyphiconClass}></span>
+      <div className="col-12">
+          <a className="badge badge-secondary" data-toggle="collapse" href="#reference-list" aria-expanded="false" aria-controls="reference-list">
             References
           </a>
-        </div>
-        <div id="reference-list" className="row collapse">
-          <div>
-            [1] http://www.chegg.com/homework-help/a-small-scale-approach-to-organic-laboratory-techniques-3rd-edition-chapter-16-solutions-9781111789411 <br />
-            [2] http://prosessitekniikka.kpedu.fi/doc-html/alkoholi.html <br />
-            [3] http://periodic.lanl.gov/index.shtml
+          <div id="reference-list" className="card card-body collapse p-3">
+            • http://www.chegg.com/homework-help/a-small-scale-approach-to-organic-laboratory-techniques-3rd-edition-chapter-16-solutions-9781111789411 <br />
+            • http://periodic.lanl.gov/index.shtml
           </div>
-        </div>
 
       </div>
     );

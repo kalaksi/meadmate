@@ -56,12 +56,14 @@ export function rate_my_mead(ethanol_amount, water_amount) {
 
     let responses = {
         'amount': {
-            '0': 'Barely a crappy ' + litres.toFixed(1) + ' litres',
+            '0': "Come on, let's get this mead going!",
+            '0.01': 'Barely a crappy ' + litres.toFixed(1) + ' litres',
             '2': litres.toFixed(1) + ' litres',
             '30': 'A crazy ' + litres.toFixed(1) + ' litres',
         },
         'percentage': {
-            '0': 'lame and watery mead with only ' + percentage.toFixed(1) + ' % of alcohol',
+            '0': '',
+            '0.1': 'lame and watery mead with only ' + percentage.toFixed(1) + ' % of alcohol',
             '2': 'awesome and sweet mead with ' + percentage.toFixed(1) + ' % of alcohol',
             '9': 'pretty strong but fine mead with ' + percentage.toFixed(1) + ' % of alcohol',
             '15': 'mead-booze with ' + percentage.toFixed(1) + ' % of alcohol and DEAD YEAST',
@@ -75,8 +77,7 @@ export function rate_my_mead(ethanol_amount, water_amount) {
     }
 
     return {
-        'message': select_response(litres, responses.amount) +
-                   ' of ' + select_response(percentage, responses.percentage),
+        'message': [select_response(litres, responses.amount), select_response(percentage, responses.percentage)].join(' '),
         'status': select_response(percentage, responses.status),
         'percentage': percentage,
     };
