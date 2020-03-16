@@ -1,0 +1,14 @@
+html, body {
+    height: 100%;
+    background-image: linear-gradient(0deg, #ff9900, #FFF);
+}
+
+#content {
+    min-height: 50%;
+    max-width: 100em;
+}
+
+#result span {
+    font-size: large;
+}
+
